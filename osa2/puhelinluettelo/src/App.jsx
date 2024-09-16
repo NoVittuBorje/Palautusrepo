@@ -1,4 +1,26 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+import PersonsService from './assets/services/PersonsService'
+import './index.css'
+import Notification from './assets/components/Noti'
+
+const ShowPersons = (prop) => {
+  var filter = prop.filteredPersons
+  console.log(filter,"showperson filter")
+  return(
+    <div>
+      {filter.map(
+        person => <Person 
+        key={person.id} 
+        id={person.id}
+        name={person.name} 
+        number={person.number}
+        handleDelete={prop.handleDelete}
+        />)}
+        
+    </div>
+    )
+}
+
 const Form = (prop) => {
   return (
     <form onSubmit={prop.AddName}>
@@ -22,19 +44,11 @@ const Form = (prop) => {
   )
 }
 const Person = (prop) => {
-  var name = prop.name
-  var number = prop.number
   return (
-    <p>{name} {number}</p>
+    <p>{prop.name} {prop.number} <button onClick={() => prop.handleDelete(prop)} >delete</button></p> 
   )
 }
-const ShowPersons = (prop) => {
-  return(
-  <div>
-    {prop.filteredPersons.map(filteredPersons => <Person key={filteredPersons.name} name={filteredPersons.name} number={filteredPersons.number} />)}
-  </div>
-  )
-}
+
 const Filter = (prop) => {
   return (
       <div>
@@ -49,46 +63,111 @@ const Filter = (prop) => {
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [persons, setPersons] = useState([])
+
+  const hook = () => {
+    console.log('effect')
+    PersonsService
+      .getAll('http://localhost:3001/persons')
+      .then(response => {
+        console.log("set")
+        setPersons(response.data)
+        setfilteredPersons(response.data)
+      })
+  }
+  useEffect(hook, [])
+  
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState("")
   const [newFilter,setNewFilter] = useState("")
   const [filteredPersons,setfilteredPersons] = useState(persons)
+  const [Message,setMessage] = useState(null)
+
+
   const AddName = (event) => {
     event.preventDefault()
+    const NewPerson = {
+      name:newName,
+      number:newNumber
+    }
+    console.log(persons,"persons")
     var listanimista = persons.map(person => person.name)
+    console.log(listanimista,"listanimistä")
     let onko = listanimista.includes(newName,0);
     if (onko === false) {
-      setPersons(persons => [...persons, {name: newName ,number: newNumber}])}
-    else alert(`${newName} is already added to phonebook`);
+      PersonsService
+      .create(NewPerson)
+        .then(returned => {        
+        console.log(returned.data)
+        let uusi = persons.concat(returned.data)
+        setPersons(uusi)
+        setfilteredPersons(uusi)
+        console.log(persons,"persons after create")
+        setNewName("")
+        setNewNumber("")
+        handleMessage("Added "+newName)
+      })
+    }
+      
+    
+    else if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+      persons.map(person => {
+        if (person.name == newName) {
+          person.number = newNumber
+          PersonsService.update(person.id,NewPerson)}}
+        )}
+      setNewName("")
+      setNewNumber("")
+      handleMessage("Changed "+newName +" number")
   }
+  const handleMessage= (prop) => {
+    setMessage(prop)
+    setTimeout(MessageNull,2000)
+  }
+  const handleDelete = (prop) => {
 
+    let id = prop.id
+    let name = prop.name
+    
+    if (window.confirm("Delete "+name+" ?")) {
+      PersonsService.deletePerson(id)
+      setPersons(persons.filter(person => person.id !== id))
+      setfilteredPersons(persons.filter(person => person.id !== id))
+      handleMessage("Deleted " +name)
+    }
+  }
   const handleName = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumber = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   const handleFilter = (event) => {
-    console.log(event.target.value)
     var filt = event.target.value
-    setNewFilter(event.target.value)
-    let filtered = persons.filter((person) => person.name.includes(filt))
-    setfilteredPersons(filtered)
-    console.log(filtered)
+    
+    setNewFilter(filt)
+    console.log(filt,newFilter,"filters")
+    console.log("filtering")
+    if (persons.length > 0)
+      setfilter(filt)
+      console.log(filt)
+      
+      
   }
-
+  const MessageNull = () =>{
+    setMessage(null)
+  }
+  const setfilter = (prop) => {
+    var personscopy = [...persons]
+      console.log(personscopy,"persons in filter")
+      var filtered = personscopy.filter((personscopy) => personscopy.name.includes(prop))
+      console.log(filtered,"filtered array")
+      setfilteredPersons(filtered)
+  }
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={Message}/>
       <div>
         <Filter handleFilter={handleFilter} newFilter={newFilter}/>
       </div>
@@ -104,7 +183,7 @@ const App = () => {
       <h2>Numbers</h2>
       
       <div>
-        <ShowPersons filteredPersons={filteredPersons} />
+        <ShowPersons ShowPersons={ShowPersons} filteredPersons={filteredPersons} persons={persons} handleDelete={handleDelete} AddName={AddName}/>
       </div>
     </div>
   )

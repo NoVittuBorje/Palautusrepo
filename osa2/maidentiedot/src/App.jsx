@@ -2,7 +2,7 @@ import { useState,useEffect } from 'react'
 import PersonsService from './assets/services/PersonsService'
 import axios from "axios"
 
-const api_key = import.meta.env.VITE_SOME_KEY
+
 
 
 const Country = (prop) => {
@@ -44,13 +44,33 @@ const ShowCountries = (prop) => {
   }
 
 const ShowCountry = (prop) => {
-  
+  const [Weather,setWeather] = useState(null)
   console.log(prop,"prop in showcountry")
   var country = prop.country
   var languages = country.languages
-  const queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${api_key}`
+  
+  const hook = () => {
+    console.log('effect')
+    PersonsService
+      .getWeather(country.capital)
+      .then(response => {
+        console.log("set")
+        setWeather(response.data)
+      })
+  }
+  useEffect(hook, [])
+  if (Weather) {
+  
+  var temp = (Weather.main.temp - 273.15).toFixed(2)
+  var wind = Weather.wind.speed
+  var clouds = Weather.weather[0].icon
+  console.log(clouds)
+  var iconurl = `https://openweathermap.org/img/wn/${clouds}@2x.png`
+  console.log(Weather,"weather")
+  console.log(iconurl)
   return (
     <div>
+      <div>
       <h1>{country.name.common}</h1>
       <p>capital {country.capital}</p>
       <p>area {country.area}</p>
@@ -60,8 +80,14 @@ const ShowCountry = (prop) => {
       </ul>
       <img src={country.flags.png} width={200} ></img>
       </div>
-    
-  )
+      <div>
+        <b>Weather in {country.capital}</b>
+        <p>temperature {temp} Celcius</p>
+        <p>wind {wind} m/s</p>
+        <img src={iconurl}></img>
+      </div>
+      </div>
+  )}
 }
 
 const Form = (prop) => {
@@ -77,6 +103,8 @@ function App() {
   const [AllCountries,SetAllCountries] = useState(null)
   const [Search,SetSearch] = useState(null)
   const [Filtered,SetFiltered] = useState(null)
+  
+
   const hook = () => {
     console.log('effect')
     PersonsService
@@ -108,7 +136,7 @@ function App() {
   return (
     <div>
     <Form handleSearch={handleSearch}/>
-    <ShowCountries Filtered={Filtered} handleFiltering={handleFiltering} />
+    <ShowCountries Filtered={Filtered} handleFiltering={handleFiltering}/>
     </div>
   )
 }

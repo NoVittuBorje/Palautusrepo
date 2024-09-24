@@ -1,8 +1,12 @@
 const express = require('express')
 const app = express()
+var morgan = require('morgan')
+const cors = require('cors')
 
-
+app.use(cors())
 app.use(express.json())
+morgan.token('content', function(req, res) {return JSON.stringify(req.body)});
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
 
 let persons = [
     {
@@ -40,20 +44,29 @@ app.get('/api/persons/:id', (request, response) => {
       const person = persons.find(note => note.id === id)
       if (!person) {
         return response.status(400).json({
-            error: "no person with thet id"
+            error: "no person with that id"
         })}
       response.json(person)})
 
 app.get("/api/persons",(request,response) => {
   response.json(persons)
 })
+
 app.post("/api/persons", (request,response) => {
   const body = request.body
-  if (!body.name || !body.number) {
+  let nimilista = persons.map(person => person.name)
+  if (!body.name) {
     return response.status(400).json({ 
-      error: "content missing"
-    })}
-  
+      error: "name missing"})}
+
+  if (!body.number) {
+    return response.status(400).json({ 
+      error: "number missing"})}
+
+  if (nimilista.includes(body.name,0)) {
+    return response.status(400).json({ 
+      error: "name already in phonebook"})}
+
   const person = {
     "name": body.name,
     "number": body.number,
@@ -73,6 +86,7 @@ function getRandomInt(min, max) {
   const maxFloored = Math.floor(max);
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);}
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})

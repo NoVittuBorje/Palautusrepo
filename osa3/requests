@@ -1,1 +1,18 @@
+delete person with id
+DELETE  https://puhelin-backend.fly.dev/api/persons/1
 
+create person
+POST https://puhelin-backend.fly.dev/api/persons content-type: application/json
+
+{
+    "name": "aeyyt3333HJ3456h45K345",
+    "number": "1456456"
+}
+
+
+get all persons
+GET https://puhelin-backend.fly.dev/api/persons
+
+
+get person with id
+GET https://puhelin-backend.fly.dev/api/persons/1

@@ -1,0 +1,23 @@
+
+DELETE  https://puhelin-backend.fly.dev/api/persons/4
+###
+POST https://puhelin-backend.fly.dev/api/persons
+Content-type: application/json
+
+{
+    "name": "aeyyt3333HJ3456h45K345",
+    "number": "1456456"
+}
+###
+GET https://puhelin-backend.fly.dev/api/persons
+###
+GET https://puhelin-backend.fly.dev/api/persons/
+###
+POST http://localhost:3001/api/persons
+Content-type: application/json
+
+{
+    "name": "Karpo",
+    "number": "1456456"
+}
+###

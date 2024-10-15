@@ -1,4 +1,6 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user_model')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -8,18 +10,27 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+
+
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
-
+  console.log(error)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
+    return response.status(400).json({ error: 'expected `username` to be unique' })
+  } else if (error.name ===  'JsonWebTokenError') {
+    return response.status(400).json({ error: 'token missing or invalid' })
+  }else if (request.header('Authorization') === ''){ 
+    return response.status(400).json({ error: 'token empty' })
   }
+
 
   next(error)
 }

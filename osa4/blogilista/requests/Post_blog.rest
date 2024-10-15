@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs 
+Content-Type: application/json 
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3MGNmZjY0NGJiZDcxN2ZkMzMzODRhYyIsImlhdCI6MTcyODkwNjYwNn0.QsEqDimxaDg_g_YKMpEahZGKU8_vvuXwasy2uqkfpLU
+
+{
+    "title": "Blogi testi 5 userin kanssa",
+    "author": "Root too 5",
+    "url":"testitesti.com/Root5",
+    "likes":5
+}

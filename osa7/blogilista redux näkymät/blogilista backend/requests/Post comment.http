@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs/673349f98e5ebbe2d955103d
+Content-Type: application/json 
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3MTYxOTJhM2I4NjU0MjU1MzEzZjM2YyIsImlhdCI6MTcyOTUwOTc4MH0.zXpY-mjI5a6TQN-jZTeA_4iKzDDiBlB3dxFafSB9Bgk
+
+{
+    "title": "Blogi commentti userin kanssa",
+    "author": "Root too 2",
+    "url":"testitesti.com/Root2",
+    "likes":2,
+    "comments":['juu','jaa']
+}

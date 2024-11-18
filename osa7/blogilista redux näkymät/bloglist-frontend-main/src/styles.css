@@ -1,0 +1,25 @@
+.message {
+    color:  green;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+.error {
+  color:  red;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.no-margin {
+  margin-right: 5px;
+}
+.Menu {
+  background-color:rgb(221, 219, 218);
+  margin-right: 5px;
+}

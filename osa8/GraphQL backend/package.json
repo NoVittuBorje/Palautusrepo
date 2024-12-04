@@ -1,0 +1,29 @@
+{
+  "name": "graphql-backend",
+  "version": "1.0.0",
+  "main": "library-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "juu",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@apollo/client": "^3.11.10",
+    "@apollo/server": "^4.11.2",
+    "@graphql-tools/schema": "^10.0.10",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "graphql": "^16.9.0",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^5.16.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.2",
+    "mongoose-unique-validator": "^4.0.1",
+    "nodemon": "^3.1.7",
+    "ws": "^8.18.0"
+  }
+}

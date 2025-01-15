@@ -75,3 +75,5 @@ export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 // Define Entry without the 'id' property
 export type EntryWithoutSsnEntrie = UnionOmit<Entry, "ssn" | 'entries'>;
+
+export type EntryWithoutId = Omit<Entry, "id">;

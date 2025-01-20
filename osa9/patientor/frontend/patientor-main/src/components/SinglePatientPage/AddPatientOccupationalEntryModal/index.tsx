@@ -7,17 +7,16 @@ interface Props {
   onClose: () => void;
   onSubmit: (values: Entry) => void;
   error?: string;
-  setError:React.Dispatch<React.SetStateAction<string|undefined>>;
   diagnoses:Diagnosis[];
 }
 
-const AddPatientOccupationalEntryModal = ({ modalOpen, onClose, onSubmit, error,setError ,diagnoses}: Props) => (
+const AddPatientOccupationalEntryModal = ({ modalOpen, onClose, onSubmit, error ,diagnoses}: Props) => (
   <Dialog fullWidth={true} open={modalOpen} onClose={() => onClose()}>
     <DialogTitle>new OccupationalHealthcare entry</DialogTitle>
     <Divider />
     <DialogContent>
       {error && <Alert severity="error">{error}</Alert>}
-      <AddPatientEntryForm onSubmit={onSubmit} onCancel={onClose} setError={setError} diagnoses={diagnoses}/>
+      <AddPatientEntryForm onSubmit={onSubmit} onCancel={onClose}  diagnoses={diagnoses}/>
     </DialogContent>
   </Dialog>
 );

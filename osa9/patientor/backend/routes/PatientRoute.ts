@@ -1,8 +1,8 @@
 import { Router,Response } from 'express';
 import { getnonSensitivePatients, getPatientByID } from '../services/PatientService';
-import { Entry,  NonSensitivePatient, Patient } from '../types';
+import { Entry,  NonSensitivePatient, Patient} from '../types';
 import { v1 as uuid } from 'uuid';
-import {  newHealtCheckEntrySchema,  newPatientSchema} from '../utils/utils';
+import {  newHealtCheckEntrySchema,  newHospitalEntrySchema,  newOccupationalEntrySchema,  newPatientSchema} from '../utils/utils';
 import { z } from 'zod';
 import { addNewPatient } from '../services/PatientService';
 import cors from 'cors';
@@ -40,18 +40,41 @@ PatientRouter.get('/:id',(req,res) => {
 PatientRouter.post('/:id/entries',(req,res) => {
   const newid:string = uuid();
   const patient = getPatientByID(req.params.id);
-  console.log(patient);
   
   try{
     console.log(req.body,"body");
+    const type = req.body.type as string;
+    if (type == "HealthCheck"){
+      
     const newEntry:Entry = newHealtCheckEntrySchema.parse(req.body) as Entry;
     newEntry.id = newid;
     const newpat = patient[0].entries;
     newpat.push(newEntry);
     patient[0].entries = newpat;
-    console.log(newpat);
-    console.log(patient[0]);
+    
+    
     res.json(patient);
+    }
+    if (type == "Hospital"){
+      
+      const newEntry:Entry = newHospitalEntrySchema.parse(req.body) as Entry;
+      newEntry.id = newid;
+      const newpat = patient[0].entries;
+      newpat.push(newEntry);
+      patient[0].entries = newpat;
+      
+      
+      res.json(patient);
+      }
+      if (type == "OccupationalHealthcare"){
+        
+        const newEntry:Entry = newOccupationalEntrySchema.parse(req.body) as Entry;
+        newEntry.id = newid;
+        const newpat = patient[0].entries;
+        newpat.push(newEntry);
+        patient[0].entries = newpat;
+        res.json(patient);
+        }
   }catch (error:unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).send({ error: error.issues });
@@ -59,4 +82,5 @@ PatientRouter.post('/:id/entries',(req,res) => {
       res.status(400).send({ error: 'unknown error' });
     }
   }
-});
+  }
+);

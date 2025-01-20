@@ -3,8 +3,8 @@ import { LocalHospital } from "@mui/icons-material";
 import { DivStyle, TextStyle } from "./PageStyle";
 const OccupationalDetails = (props:OccupationalHealthcareEntry) => {
     return (
-        <div style={DivStyle} key={props.id}>
-        <p style={TextStyle}>{props.date} <LocalHospital key={props.description}/> {props.employerName}</p>
+        <div style={DivStyle}>
+        <p style={TextStyle}>{props.date} <LocalHospital/> {props.employerName}</p>
         <p style={TextStyle}>{props.description}</p>
         
         {props.diagnosisCodes?.map(code => {

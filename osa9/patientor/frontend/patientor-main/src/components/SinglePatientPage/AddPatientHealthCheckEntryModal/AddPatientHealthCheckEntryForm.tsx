@@ -16,15 +16,14 @@ const MenuProps = {
 interface Props {
   onCancel: () => void;
   onSubmit: (values: Entry) => void;
-  setError:React.Dispatch<React.SetStateAction<string|undefined>>;
   diagnoses:Diagnosis[]
 }
 
-const AddPatientHealthCheckEntryForm = ({ onCancel, onSubmit, setError, diagnoses}: Props) => {
+const AddPatientHealthCheckEntryForm = ({ onCancel, onSubmit, diagnoses}: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [type, setType] = useState('HealthCheck');
+  const type = 'HealthCheck';
   const id = "";
   const [healthCheckRating,setHealthCheckRating] = useState(0);
   const [diagnosisCodes, setDiagnosesCodes] = useState<string[]>([]);

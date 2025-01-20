@@ -21,9 +21,9 @@ const healthIcon = (Rating:number) => {
 };
 
 const HealthCheckDetails = (props:HealthCheckEntry) => {
-    console.log(props);
+    
     return (
-        <div style={DivStyle} key={props.id}>
+        <div style={DivStyle}>
             <p style={TextStyle}>{props.date} <MedicalServicesIcon/></p>
             <p style={TextStyle}>{props.description}</p>
             <p style={TextStyle}>{healthIcon(props.healthCheckRating)}</p>

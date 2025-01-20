@@ -1,6 +1,6 @@
-import { Grid, Button, TextField, Radio, FormControlLabel, RadioGroup, FormControl, FormLabel,Input, Checkbox, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
+import { Grid, Button, TextField, FormControl, Input, Checkbox, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
-import { Diagnosis, Entry, HealthCheckRating } from "../../../types";
+import { Diagnosis, Entry,  SickLeave } from "../../../types";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -16,20 +16,23 @@ const MenuProps = {
 interface Props {
   onCancel: () => void;
   onSubmit: (values: Entry) => void;
-  setError:React.Dispatch<React.SetStateAction<string|undefined>>;
   diagnoses:Diagnosis[]
 }
 
-const AddPatientOccupationalEntryForm = ({ onCancel, onSubmit, setError, diagnoses}: Props) => {
+const AddPatientOccupationalEntryForm = ({ onCancel, onSubmit, diagnoses}: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [type, setType] = useState('HealthCheck');
+  const type = 'OccupationalHealthcare';
   const id = "";
-  const [healthCheckRating,setHealthCheckRating] = useState(0);
+
   const [diagnosisCodes, setDiagnosesCodes] = useState<string[]>([]);
+  const [employerName, setemployerName] = useState("");
+  const [startDate, setstartDate] = useState("");
+  const [endDate, setendDate] = useState("");
   
 
+  
   const handleChange = (event: SelectChangeEvent<typeof diagnosisCodes>) => {
     const {
       target: { value },
@@ -40,12 +43,14 @@ const AddPatientOccupationalEntryForm = ({ onCancel, onSubmit, setError, diagnos
   };
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+    const sickLeave:SickLeave = {startDate,endDate};
     onSubmit({
       type,
       description,
       date,
       specialist,
-      healthCheckRating,
+      employerName,
+      sickLeave,
       diagnosisCodes,
       id,
     });
@@ -74,24 +79,38 @@ const AddPatientOccupationalEntryForm = ({ onCancel, onSubmit, setError, diagnos
             value={specialist}
             onChange={({ target }) => setSpecialist(target.value)}
           />
+          <TextField 
+          label="Employee"
+          fullWidth
+          value={employerName}
+          onChange={({target}) => setemployerName(target.value)}
+          />
+          <div>
+          <label>Sickleave:
+            <div>
+          <label>start
+          <Input 
+            type="date"
+            id={"startdate"}           
+            placeholder="YYYY-MM-DD"
+            value={startDate}
+            onChange={({ target }) => setstartDate(target.value)}/>
+            </label>
+            </div>
+          <div>
+              <label>end
+          <Input 
+            type="date"
+            id={"enddate"}           
+            placeholder="YYYY-MM-DD"
+            value={endDate}
+            onChange={({ target }) => setendDate(target.value)}/>
+            </label>
+          </div>
+          </label>
+          </div>
+          
 
-          
-          
-          <FormControl>
-          <FormLabel id="juu" >HealtRating</FormLabel>
-          <RadioGroup
-            
-            row
-            aria-labelledby="juu"
-            defaultValue={HealthCheckRating.Healthy}
-            name="Health-button-Group"
-          >
-            <FormControlLabel value={HealthCheckRating.CriticalRisk} control={<Radio value={3} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.CriticalRisk} />
-            <FormControlLabel value={HealthCheckRating.HighRisk} control={<Radio value={2} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.HighRisk} />
-            <FormControlLabel value={HealthCheckRating.LowRisk} control={<Radio value={1} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.LowRisk} />
-            <FormControlLabel value={HealthCheckRating.Healthy} control={<Radio value={0} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.Healthy} />
-          </RadioGroup>
-        </FormControl>
         <div>
         <FormControl sx={{ m: 1, width: 300 }}>
         <InputLabel id="diagnosisCodes">Diagnosis Codes</InputLabel>

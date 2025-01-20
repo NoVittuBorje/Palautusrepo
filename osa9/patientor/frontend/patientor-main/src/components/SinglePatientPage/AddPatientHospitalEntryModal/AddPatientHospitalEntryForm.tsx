@@ -1,6 +1,6 @@
-import { Grid, Button, TextField, Radio, FormControlLabel, RadioGroup, FormControl, FormLabel,Input, Checkbox, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
+import { Grid, Button, TextField,  FormControl, Input, Checkbox, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
-import { Diagnosis, Entry, HealthCheckRating } from "../../../types";
+import { Diagnosis, Discharge, Entry } from "../../../types";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -16,18 +16,18 @@ const MenuProps = {
 interface Props {
   onCancel: () => void;
   onSubmit: (values: Entry) => void;
-  setError:React.Dispatch<React.SetStateAction<string|undefined>>;
   diagnoses:Diagnosis[]
 }
 
-const AddPatientHospitalEntryForm = ({ onCancel, onSubmit, setError, diagnoses}: Props) => {
+const AddPatientHospitalEntryForm = ({ onCancel, onSubmit,  diagnoses}: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [type, setType] = useState('HealthCheck');
+  const type = 'Hospital';
   const id = "";
-  const [healthCheckRating,setHealthCheckRating] = useState(0);
   const [diagnosisCodes, setDiagnosesCodes] = useState<string[]>([]);
+  const [Dischargedate, setDischargedate] = useState("");
+  const [criteria, setcriteria] = useState("");
   
 
   const handleChange = (event: SelectChangeEvent<typeof diagnosisCodes>) => {
@@ -40,12 +40,17 @@ const AddPatientHospitalEntryForm = ({ onCancel, onSubmit, setError, diagnoses}:
   };
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+    const discharge:Discharge = {
+      date :Dischargedate,
+      criteria
+    };
+    
     onSubmit({
       type,
       description,
       date,
       specialist,
-      healthCheckRating,
+      discharge,
       diagnosisCodes,
       id,
     });
@@ -74,24 +79,31 @@ const AddPatientHospitalEntryForm = ({ onCancel, onSubmit, setError, diagnoses}:
             value={specialist}
             onChange={({ target }) => setSpecialist(target.value)}
           />
+        <div>
+        <label>Discharge
+          <div>
+            <label >date:
+          <Input 
+            type="date"
+            id={"disdate" }          
+            placeholder="YYYY-MM-DD"
+            value={Dischargedate}
+            onChange={({ target }) => setDischargedate(target.value)}/>
+            </label>
+          </div>
+        <div>
+        <TextField
+            label="criteria"
+            fullWidth 
+            value={criteria}
+            onChange={({ target }) => setcriteria(target.value)}
+          />
+        </div>
+        </label>
+        </div>
+        
+          
 
-          
-          
-          <FormControl>
-          <FormLabel id="juu" >HealtRating</FormLabel>
-          <RadioGroup
-            
-            row
-            aria-labelledby="juu"
-            defaultValue={HealthCheckRating.Healthy}
-            name="Health-button-Group"
-          >
-            <FormControlLabel value={HealthCheckRating.CriticalRisk} control={<Radio value={3} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.CriticalRisk} />
-            <FormControlLabel value={HealthCheckRating.HighRisk} control={<Radio value={2} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.HighRisk} />
-            <FormControlLabel value={HealthCheckRating.LowRisk} control={<Radio value={1} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.LowRisk} />
-            <FormControlLabel value={HealthCheckRating.Healthy} control={<Radio value={0} onChange={({ target }) => setHealthCheckRating(Number(target.value))}/>} label={HealthCheckRating.Healthy} />
-          </RadioGroup>
-        </FormControl>
         <div>
         <FormControl sx={{ m: 1, width: 300 }}>
         <InputLabel id="diagnosisCodes">Diagnosis Codes</InputLabel>

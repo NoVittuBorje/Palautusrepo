@@ -21,14 +21,14 @@ const create = async (object: PatientFormValues) => {
 };
 
 const getbyId = async (id:string | undefined) => {
-  const { data } = await axios.get<Patient>(
+  const { data } = await axios.get<Patient[]>(
     `${apiBaseUrl}/patients/${id}`
   );
   
   return data;
 };
-const createEntry = async (object:Entry,id:string | undefined) => {
-  const { data } = await axios.post<Entry>(
+const createEntry = async (object:Entry,id:string | undefined) =>{
+  const { data } = await axios.post<Patient[]>(
     `${apiBaseUrl}/patients/${id}/entries`,
     object
   );

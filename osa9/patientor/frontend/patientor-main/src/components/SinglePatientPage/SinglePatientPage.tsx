@@ -6,7 +6,7 @@ import { useMatch } from "react-router-dom";
 import HospitalDetails from "./HospitalDetails";
 import OccupationalDetails from "./OccupationDetails";
 import HealthCheckDetails from "./HealthCheckDetails";
-import { Button, Table, TableCell} from "@mui/material";
+import { Button, Table, TableBody, TableContainer} from "@mui/material";
 import axios from "axios";
 import { TextStyle } from "./PageStyle";
 import AddPatientHealthCheckEntryModal from "./AddPatientHealthCheckEntryModal";
@@ -30,29 +30,39 @@ const SinglePatientPage = () => {
     const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
     const [error, setError] = useState<string>();
 
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const openModal = (): void => setModalOpen(true);
+    const [modalOpenHealthCheck, setModalOpenHealthCheck] = useState<boolean>(false);
+    const [modalOpenHospital, setModalOpenHospital] = useState<boolean>(false);
+    const [modalOpenOccupational, setModalOpenOccupational] = useState<boolean>(false);
+    const openModalHealthCheck = (): void => setModalOpenHealthCheck(true);
+    const openModalHospital = (): void => setModalOpenHospital(true);
+    const openModalOccupational = (): void => setModalOpenOccupational(true);
     const closeModal = (): void => {
-        setModalOpen(false);
+        setModalOpenHospital(false);
+        setModalOpenHealthCheck(false);
+        setModalOpenOccupational(false);
         setError(undefined);
     };
     
     
     const submitNewPatientEntry = async (values: Entry) => {
+      if (values.date == "" || values.description == "" || values.specialist == ""){
+        setError("Empty date, description or specialist");
+        return;
+      }
+      if(patient != undefined){
         try {
-            console.log(values);
+            
             const newpat = await patientService.createEntry(values,patient[0].id);
+            
             setPatient(newpat);
-            setModalOpen(false);
+            closeModal();
           } catch (e: unknown) {
             
             if (axios.isAxiosError(e)) {
-              if (e.response.data){
-                console.log(e.response.data.error[0]);
+              if (e?.response?.data && e.response != undefined){
+                
                 const errorData = e.response.data.error[0];
                 setError(errorData.message);
-              
-
               } else {
                 setError("Unrecognized axios error");
               }
@@ -61,12 +71,14 @@ const SinglePatientPage = () => {
               setError("Unknown error");
             }
           }
+        }
     };
     const MatchId = useMatch("/patients/:id");
     if (MatchId !== undefined && MatchId !== null) {
     const fetchData = async () => {
         const id = MatchId.params.id;
         const patdata = await patientService.getbyId(id);
+        
         setPatient(patdata);
         const diadata = await diagnosesService.getAllDiagnoses();
         setDiagnoses(diagnoses.concat(diadata));
@@ -80,54 +92,57 @@ const SinglePatientPage = () => {
     if (patient && diagnoses){
     const entries:Entry[] = patient[0].entries;
     const patientDetails = patient[0];
-    console.log(patient);
+    
+    
     return(
-        <div key={patientDetails.id}>
+      <div>
+        <div>
             <h2 style={TextStyle}>{patientDetails.name}</h2>
             <p style={TextStyle}>ssn: {patientDetails.ssn}</p>
             <p style={TextStyle}>occupation: {patientDetails.occupation}</p>
+            <div style={{marginTop:"5px",marginBottom:"5px"}}>
+              <AddPatientHealthCheckEntryModal
+              modalOpen={modalOpenHealthCheck}
+              onSubmit={submitNewPatientEntry}
+              error={error}
+              onClose={closeModal}
+              diagnoses={diagnoses}
+            />
+              <Button size="small" variant="contained" onClick={() => openModalHealthCheck()}>Add New HealthCheck Entry</Button>
+
+              <AddPatientHospitalEntryModal
+              modalOpen={modalOpenHospital}
+              onSubmit={submitNewPatientEntry}
+              error={error}
+              onClose={closeModal}
+              diagnoses={diagnoses}
+            />
+              <Button size="small" variant="contained" onClick={() => openModalHospital()}>Add New Hospital Entry</Button>
+
+              <AddPatientOccupationalEntryModal
+              modalOpen={modalOpenOccupational}
+              onSubmit={submitNewPatientEntry}
+              error={error}
+              onClose={closeModal}
+              diagnoses={diagnoses}
+            />
+            <Button size="small" variant="contained" onClick={() => openModalOccupational()}>Add New Occupational Entry</Button>
+        </div>
             <b style={{marginLeft:"3%" }}>Entries</b>
+            <TableContainer key={patientDetails.id}>
+              <Table key="entryDetails" sx={{ minWidth: 650 }} aria-label="simple table">
             {entries.map((entry:Entry) => {
-                console.log(entry);
+                
                 const entryDetails = EntryDetails({entry});
                 return(
-                    <Table style={{margin:"0px",marginTop:"0px",marginBottom:"0px"}}>
-                        <TableCell key={entry.id} size="small">{entryDetails}</TableCell>
-                    </Table>
-                );
-            }
-            )}
-        <AddPatientHealthCheckEntryModal
-        modalOpen={modalOpen}
-        onSubmit={submitNewPatientEntry}
-        error={error}
-        onClose={closeModal}
-        setError={setError}
-        diagnoses={diagnoses}
-      />
-        <Button variant="contained" onClick={() => openModal()}>Add New Entry</Button>
-
-        <AddPatientHospitalEntryModal
-        modalOpen={modalOpen}
-        onSubmit={submitNewPatientEntry}
-        error={error}
-        onClose={closeModal}
-        setError={setError}
-        diagnoses={diagnoses}
-      />
-        <Button variant="contained" onClick={() => openModal()}>Add New Entry</Button>
-
-        <AddPatientOccupationalEntryModal
-        modalOpen={modalOpen}
-        onSubmit={submitNewPatientEntry}
-        error={error}
-        onClose={closeModal}
-        setError={setError}
-        diagnoses={diagnoses}
-      />
-        <Button variant="contained" onClick={() => openModal()}>Add New Entry</Button>
+                  <TableBody key={entry.id}>{entryDetails}</TableBody>
+                );})}
+                
+              </Table>
+            </TableContainer>
 
         </div>
+      </div>
     );}
 
 }};

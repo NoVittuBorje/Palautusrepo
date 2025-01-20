@@ -1,4 +1,4 @@
-import { Gender, HealthCheckRating, NewPatientEntry, Type ,   Entry, Diagnosis} from "../types";
+import { Gender, HealthCheckRating, NewPatientEntry, Type , Diagnosis} from "../types";
 import {   z } from 'zod';
 
 export const newPatientSchema = z.object({
@@ -44,24 +44,11 @@ export const newHealtCheckEntrySchema = z.object({
 });
 
 export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
-  console.log(object);
+  
   return newPatientSchema.parse(object);
 };
 
-export const NewPatientEntryParse = (object : Entry) => {
-  if (object.type == "Hospital"){
-    return newHospitalEntrySchema.parse(object);
-  };
-  if (object.type == "OccupationalHealthcare"){
-    return newOccupationalEntrySchema.parse(object);
-  };
-  if (object.type == "HealthCheck"){
-    return newHealtCheckEntrySchema.parse(object);
-  };
-  
-  return object;
-  
-};
+
 export const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> =>  {
   if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
     // we will just trust the data to be in correct form
